@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+</head>
+
+<body>
+
+    <h1>{{ request.session.user_name }}! 欢迎回来！</h1>
+    <p>
+        <a href="/logout/">登出</a>
+    </p>
+    {% if not isdriver %}
+    <div>
+        <a href="/index/driverdetail">be a driver!</a>
+    </div>
+    {% endif %}
+    <div>
+        <a href="/index/profile">profile</a>
+    </div>
+    <div>
+        <a href="/index/openride">open a ride as an owner</a>
+    </div>
+    <div>
+        <a href="/index/shareride">search a ride as a sharer</a>
+    </div>
+    {% if isdriver %}
+    <div>
+        <a href="/index/driveride">search a ride as a driver</a>
+    </div>
+    {% endif %}
+
+    <div>
+        <p>Owner:</p>
+        {% for ride in rides %} {% if ride.owner.name == cur_user.name %}
+        <p>owner:{{ride.owner}}</p>
+        <p>cartype:{{ride.cartype}}</p>
+        <p>ridedriver:{{ride.ridedriver}}</p>
+        <p>sharer:{{ride.sharer}}</p>
+        <p>dest:{{ride.dest}}</p>
+        <p>arrivaltime:{{ride.arrivaltime}}</p>
+        <p>endtime:{{ride.endtime}}</p>
+        <p>freeText:{{ride.freeText}}</p>
+        <p>owner:{{ride.}}</p>
+        <p> </p>
+        {% endif %} {% endfor %}
+    </div>
+    <div>
+        <p>Sharer</p>
+    </div>
+    <div>
+        <p>Driver</p>
+        {% for ride in rides %} {% if ride.ridedriver == cur_user.name %}
+        <p>owner:{{ride.owner}}</p>
+        <p>cartype:{{ride.cartype}}</p>
+        <p>ridedriver:{{ride.ridedriver}}</p>
+        <p>sharer:{{ride.sharer}}</p>
+        <p>dest:{{ride.dest}}</p>
+        <p>arrivaltime:{{ride.arrivaltime}}</p>
+        <p>endtime:{{ride.endtime}}</p>
+        <p>freeText:{{ride.freeText}}</p>
+        <p>owner:{{ride.}}</p>
+        {% endif %} {% endfor %}
+    </div>
+</body>
+
+</html>

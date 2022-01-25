@@ -1,0 +1,3 @@
+
+drop table login_ride;
+drop table login_relationship;

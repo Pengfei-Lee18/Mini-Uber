@@ -1,0 +1,91 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- 上述meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'login/register.css' %}" rel="stylesheet" />
+    <title>editprofile</title>
+</head>
+
+<body>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %} {% if message %}
+        <div class="alert alert-warning">{{ message }}</div>
+        {% endif %}
+        <div class="container main">
+            <div id="index_right" class="col-md-6 text-center right">
+                <div style="position: absolute;top: 120px;left: 30px;text-align: center">
+                    <p class="home-description">
+                        username: <label>
+                            <input name="username" type="text" value="{{ cur_user.name }}">
+                        </label>
+                    </p>
+                    <p class="home-description">
+                        gender: {% if cur_user.sex == "male" %}
+                        <label>
+                                <input name="sex" type="radio" value="male" checked>Male
+                            </label>
+                        <label>
+                                <input name="sex" type="radio" value="female">Female
+                            </label> {% else %}
+                        <label>
+                                <input name="sex" type="radio" value="male">Male
+                            </label>
+                        <label>
+                                <input name="sex" type="radio" value="female" checked>Female
+                            </label> {% endif %}
+                    </p>
+                    <p class="home-description">
+                        email: <label>
+                            <input name="email" type="text" value="{{ cur_user.email }}">
+                        </label>
+                    </p>
+                    {% if cur_user.driver %}
+                    <p class="home-description">
+                        <label>
+                                <input name="driver" type="checkbox" value="True" checked> still want to be a driver
+                        </label>
+                    </p>
+                    <p class="home-description">
+                        car type: <label>
+                            <input name="cartype" type="text" value="{{ cur_car.cartype }}">
+                        </label>
+                    </p>
+                    <p class="home-description">
+                        plat number: <label>
+                            <input name="plateNumber" type="text" value="{{ cur_car.plateNumber }}">
+                        </label>
+                    </p>
+                    <p class="home-description">
+                        passenger number: <label>
+                            <input name="passengersNumber" type="text" value="{{ cur_car.passengersNumber }}">
+                        </label>
+                    </p>
+                    <p class="home-description">
+                        free text: <label>
+                            <input name="freeText" type="text" value="{{ cur_car.freeText }}">
+                        </label>
+                    </p>
+                    {% endif %}
+                </div>
+                <a href="/index/profile/">back</a>
+                <p style="position: absolute; left: 180px;top: 735px;" class="center">
+                    <button type="submit" value="submit">submit</button>
+                </p>
+            </div>
+        </div>
+
+    </form>
+
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.15.0/umd/popper.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

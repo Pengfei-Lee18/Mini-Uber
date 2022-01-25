@@ -1,0 +1,51 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- 上述meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'login/register.css' %}" rel="stylesheet" />
+    <title>register</title>
+</head>
+
+<body>
+    driveresult
+
+    <!-- /container -->
+    <form method="post" enctype="multipart/form-data" action="/index/driveride/result{{space}}/">
+        {% csrf_token %}lp
+        <div class="container main">
+            <div id="index_right" class="col-md-6 text-center right">
+                <div style="position: absolute;top: 120px;left: 30px;text-align: center">
+                    {% for ride in ridelist %}
+                    <div>
+                        <label>
+                            <input name="ride" type="checkbox" value="{{ride.id}}">
+                            {{ride.owner}} {{ride.dest}} {{ride.endtime}}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                <a href="/index/driveride/">back</a>
+                <p style="position: absolute; left: 180px;top: 735px;" class="center">
+                    <button type="submit" value="submit">submit</button>
+                </p>
+            </div>
+        </div>
+
+    </form>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    {# 以下三者的引用顺序是固定的#}
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.15.0/umd/popper.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
