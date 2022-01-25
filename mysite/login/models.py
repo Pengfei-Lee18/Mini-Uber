@@ -27,8 +27,8 @@ class User(models.Model):
     
 class Car(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    cartype = models.CharField(max_length=128, unique=True)
-    plateNumber = models.CharField(max_length=256)
+    cartype = models.CharField(max_length=128)
+    plateNumber = models.CharField(max_length=256, unique=True)
     passengersNumber = models.DecimalField(max_digits=3, decimal_places=0)
     freeText = models.CharField(max_length=256)
     def __str__(self):

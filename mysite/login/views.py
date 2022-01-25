@@ -125,9 +125,10 @@ def driverdetail(request):
             cur_user_id = request.session['user_id']
             cur_user = models.User.objects.get(id = cur_user_id)
             print(cur_user)
-            cur_car = models.Car.objects.get(user = cur_user)
+            cur_car = models.Car.objects.filter(user = cur_user)
+            print(cur_car)
             if(cur_car):
-                new_car = cur_car
+                new_car = models.Car.objects.get(user = cur_user)
             else:
                 new_car = models.Car()
             print(new_car)
@@ -138,7 +139,11 @@ def driverdetail(request):
             if(cur_user.driver == False):
                 new_car.user = cur_user
                 cur_user.driver = True
-            new_car.save()
+            try:
+                new_car.save()
+            except :
+                message = 'check your input, maybe exist plate number'
+                return render(request, 'login/driverdetail.html', locals())
             cur_user.save()
             return redirect('/index/')
         else:
