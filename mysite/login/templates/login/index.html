@@ -8,9 +8,9 @@
 
 <body>
 
-    <h1>{{ request.session.user_name }}! 欢迎回来！</h1>
+    <h1>{{ request.session.user_name }}! Welcome! </h1>
     <p>
-        <a href="/logout/">登出</a>
+        <a href="/logout/">Log out</a>
     </p>
     {% if not isdriver %}
     <div>
@@ -36,6 +36,7 @@
         <h2>Owner:</h2>
         {% for ride in owner_rides %}
         <p>owner:{{ride.owner}}</p>
+        <p>ownernumber:{{ride.ownernumber}}</p>
         <p>cartype:{{ride.cartype}}</p>
         <p>ridedriver:{{ride.ridedriver}}</p>
         {% for sharer in ride.sharer.all %}
@@ -47,6 +48,9 @@
         <p>arrivaltime:{{ride.arrivaltime}}</p>
         <p>endtime:{{ride.endtime}}</p>
         <p>freeText:{{ride.freeText}}</p>
+        {% if ride.status == 0 %}
+        <a href="/index/owneredit{{ride.id}}">edit</a>
+        <a href="/index/ownercancel{{ride.id}}">cancel</a> {% endif %}
         <p>------------------------------------</p>
 
         {% endfor %}
@@ -55,6 +59,7 @@
         <h2>Sharer</h2>
         {% for ride in sharer_rides %}
         <p>owner:{{ride.owner}}</p>
+        <p>ownernumber:{{ride.ownernumber}}</p>
         <p>cartype:{{ride.cartype}}</p>
         <p>ridedriver:{{ride.ridedriver}}</p>
         {% for sharer in ride.sharer.all %}
@@ -66,6 +71,9 @@
         <p>arrivaltime:{{ride.arrivaltime}}</p>
         <p>endtime:{{ride.endtime}}</p>
         <p>freeText:{{ride.freeText}}</p>
+        {% if ride.status == 0 %}
+        <a href="/index/shareredit{{ride.id}}">edit</a>
+        <a href="/index/sharercancel{{ride.id}}">cancel</a> {% endif %}
         <p>------------------------------------</p>
 
         {% endfor %}
@@ -74,6 +82,7 @@
         <h2>Driver</h2>
         {% for ride in driver_rides %}
         <p>owner:{{ride.owner}}</p>
+        <p>ownernumber:{{ride.ownernumber}}</p>
         <p>cartype:{{ride.cartype}}</p>
         <p>ridedriver:{{ride.ridedriver}}</p>
         {% for sharer in ride.sharer.all %}
@@ -85,8 +94,12 @@
         <p>arrivaltime:{{ride.arrivaltime}}</p>
         <p>endtime:{{ride.endtime}}</p>
         <p>freeText:{{ride.freeText}}</p>
+        {% if ride.status == 1 %}
+        <a href="/index/complete{{ride.id}}">complete</a> {% endif %}
+        <p>------------------------------------</p>
         {% endfor %}
     </div>
+
 </body>
 
 </html>

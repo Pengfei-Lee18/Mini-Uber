@@ -316,3 +316,65 @@ def driveresult(request, cartype):
             cur_ride.save()
         return redirect('/index/')
     return render(request, 'login/driveresult.html', locals())
+
+def owneredit(request, ride_id):
+    cur_ride = models.Ride.objects.get(id=ride_id)
+    form = forms.OwnereditForm(instance=cur_ride)
+    if request.method == 'POST':
+        form = forms.OwnereditForm(request.POST)
+        if form.is_valid():
+            # save the form data to model
+            cur_ride = models.Ride.objects.get(id=ride_id)
+            tem_ownernumber = cur_ride.ownernumber
+            cur_ride.ownernumber = form.cleaned_data.get('ownernumber')
+            cur_ride.cartype = form.cleaned_data.get('cartype')
+            cur_ride.dest = form.cleaned_data.get('dest')
+            cur_ride.arrivaltime = form.cleaned_data.get('arrivaltime')
+            cur_ride.endtime = form.cleaned_data.get('endtime')
+            cur_ride.freeText = form.cleaned_data.get('freeText')
+            cur_ride.carspace = cur_ride.carspace - tem_ownernumber + cur_ride.ownernumber
+            cur_ride.save()
+            return redirect('/index/')
+        else:
+            return render(request, 'login/editride.html', locals())
+    return render(request, 'login/editride.html', locals())
+
+def ownercancel(request, ride_id):
+    models.Ride.objects.get(id=ride_id).delete()
+    return redirect('/index/')
+
+def shareredit(request, ride_id):
+    cur_ride = models.Ride.objects.get(id=ride_id)
+    cur_user_id = request.session['user_id']
+    cur_user = models.User.objects.get(id = cur_user_id)
+    cur_relationship = models.Relationship.objects.get(user=cur_user, ride=cur_ride)
+    form = forms.SharereditForm(instance=cur_relationship)
+    if request.method == 'POST':
+        form = forms.SharereditForm(request.POST)
+        if form.is_valid():
+            tem_groupnumber = cur_relationship.groupnumber
+            cur_relationship.groupnumber = form.cleaned_data.get('groupnumber')
+            cur_ride.carspace = cur_ride.carspace - tem_groupnumber + cur_relationship.groupnumber
+            cur_relationship.save()
+            cur_ride.save()
+            return redirect('/index/')
+        else:
+            return render(request, 'login/editride.html', locals())
+    return render(request, 'login/editride.html', locals())
+
+def sharercancel(request, ride_id):
+    cur_ride = models.Ride.objects.get(id=ride_id)
+    cur_user_id = request.session['user_id']
+    cur_user = models.User.objects.get(id = cur_user_id)
+    cur_relationship = models.Relationship.objects.get(user=cur_user, ride=cur_ride)
+    cur_ride.carspace = cur_ride.carspace - cur_relationship.groupnumber
+    cur_ride.save()
+    cur_relationship.delete()
+    return redirect('/index/')
+
+def complete(request, ride_id):
+    cur_ride = models.Ride.objects.get(id=ride_id)
+    cur_ride.status = 2
+    cur_ride.save()
+    return redirect('/index/')
+
