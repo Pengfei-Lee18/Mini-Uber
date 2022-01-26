@@ -33,36 +33,59 @@
     {% endif %}
 
     <div>
-        <p>Owner:</p>
-        {% for ride in rides %} {% if ride.owner.name == cur_user.name %}
+        <h2>Owner:</h2>
+        {% for ride in owner_rides %}
         <p>owner:{{ride.owner}}</p>
         <p>cartype:{{ride.cartype}}</p>
         <p>ridedriver:{{ride.ridedriver}}</p>
-        <p>sharer:{{ride.sharer}}</p>
+        {% for sharer in ride.sharer.all %}
+        <p>sharer:{{sharer.name}}</p>
+        {% for relationship in relationships %} {% if relationship.user == sharer and relationship.ride == ride %}
+        <p>sharernumber:{{relationship.groupnumber}}</p>
+        {% endif %} {% endfor %} {% endfor %}
         <p>dest:{{ride.dest}}</p>
         <p>arrivaltime:{{ride.arrivaltime}}</p>
         <p>endtime:{{ride.endtime}}</p>
         <p>freeText:{{ride.freeText}}</p>
-        <p>owner:{{ride.}}</p>
-        <p> </p>
-        {% endif %} {% endfor %}
+        <p>------------------------------------</p>
+
+        {% endfor %}
     </div>
     <div>
-        <p>Sharer</p>
-    </div>
-    <div>
-        <p>Driver</p>
-        {% for ride in rides %} {% if ride.ridedriver == cur_user.name %}
+        <h2>Sharer</h2>
+        {% for ride in sharer_rides %}
         <p>owner:{{ride.owner}}</p>
         <p>cartype:{{ride.cartype}}</p>
         <p>ridedriver:{{ride.ridedriver}}</p>
-        <p>sharer:{{ride.sharer}}</p>
+        {% for sharer in ride.sharer.all %}
+        <p>sharer:{{sharer.name}}</p>
+        {% for relationship in relationships %} {% if relationship.user == sharer and relationship.ride == ride %}
+        <p>sharernumber:{{relationship.groupnumber}}</p>
+        {% endif %} {% endfor %} {% endfor %}
         <p>dest:{{ride.dest}}</p>
         <p>arrivaltime:{{ride.arrivaltime}}</p>
         <p>endtime:{{ride.endtime}}</p>
         <p>freeText:{{ride.freeText}}</p>
-        <p>owner:{{ride.}}</p>
-        {% endif %} {% endfor %}
+        <p>------------------------------------</p>
+
+        {% endfor %}
+    </div>
+    <div>
+        <h2>Driver</h2>
+        {% for ride in driver_rides %}
+        <p>owner:{{ride.owner}}</p>
+        <p>cartype:{{ride.cartype}}</p>
+        <p>ridedriver:{{ride.ridedriver}}</p>
+        {% for sharer in ride.sharer.all %}
+        <p>sharer:{{sharer.name}}</p>
+        {% for relationship in relationships %} {% if relationship.user == sharer and relationship.ride == ride %}
+        <p>sharernumber:{{relationship.groupnumber}}</p>
+        {% endif %} {% endfor %} {% endfor %}
+        <p>dest:{{ride.dest}}</p>
+        <p>arrivaltime:{{ride.arrivaltime}}</p>
+        <p>endtime:{{ride.endtime}}</p>
+        <p>freeText:{{ride.freeText}}</p>
+        {% endfor %}
     </div>
 </body>
 

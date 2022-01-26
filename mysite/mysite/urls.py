@@ -30,5 +30,5 @@ urlpatterns = [
     path('index/shareride/',views.shareride),
     path('index/shareride/result<int:sharenumber>/',views.shareresult),
     path('index/driveride/',views.driveride),
-    path('index/driveride/result<int:space>/',views.driveresult),
+    path('index/driveride/result<int:cartype>/',views.driveresult),
 ]

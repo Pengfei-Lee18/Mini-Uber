@@ -1,3 +1,4 @@
+from unicodedata import name
 from django.shortcuts import render
 from django.shortcuts import redirect
 from . import models
@@ -9,6 +10,7 @@ import json
 
 
 def index(request):
+    print(" abaababa",request.session.get('is_login'))
     if not request.session.get('is_login', None):
         return redirect('/login/')
     cur_user_id = request.session['user_id']
@@ -16,18 +18,28 @@ def index(request):
     isdriver = cur_user.driver
     print(isdriver)
     #modify begin
-    print(11111111)
-    rides = models.Ride.objects.all()
-    # owners_ride = models.Ride.objects.get(owner = cur_user)
-    # print(owners_ride)
-    # drivers_ride = models.Ride.objects.get(driver = cur_user)
+    
+    #rides = models.Ride.objects.all()
+    owner_rides = models.Ride.objects.filter(owner = cur_user)
+    sharer_rides = models.Ride.objects.filter(sharer__name__startswith = cur_user)
+    relationships = models.Relationship.objects.all()
+    # for ride in sharer_rides:
+    #     print("-----")
+    #     print(ride.sharer.all())
+    driver_rides = models.Ride.objects.filter(ridedriver = cur_user.name)
+
+    # print(owner_rides)
+    # print(driver_rides)
+    #sharers_ride = models.Ride.objects.filter(shareride = cur_user)
+    #print(owners_ride)
+    #drivers_ride = models.Ride.objects.get(driver = cur_user)
     #modify end
     return render(request, 'login/index.html', locals())
 
 
 def login(request):
-    # if request.session.get('is_login', None):  
-    #     return redirect('/index/')
+    if request.session.get('is_login', None):  
+        return redirect('/index/')
     if request.method == 'POST':
         login_form = forms.UserForm(request.POST)
         message = 'check your input!'
@@ -56,14 +68,10 @@ def login(request):
     return render(request, 'login/login.html', locals())
 
 def logout(request):
-    if not request.session.get('is_login', None):
-        # 如果本来就未登录，也就没有登出一说
-        return redirect("/login/")
+    # if not request.session.get('is_login', None):
+    #     # 如果本来就未登录，也就没有登出一说
+    #     return redirect("/login/")
     request.session.flush()
-    # 或者使用下面的方法
-    # del request.session['is_login']
-    # del request.session['user_id']
-    # del request.session['user_name']
     return redirect("/login/")
 
 
@@ -108,10 +116,6 @@ def register(request):
     register_form = forms.RegisterForm()
     return render(request, 'login/register.html', locals())
 
-
-def logout(request):
-    pass
-    return redirect("/login/")
 
 def driverdetail(request):
     if request.method == 'POST':
@@ -299,7 +303,7 @@ def driveride(request):
     driver_form = forms.DriverForm()
     return render(request, 'login/driveride.html', locals())
 
-def driveresult(request, space):
+def driveresult(request, cartype):
     if request.method == 'POST':
         ridelist = request.POST.getlist("ride")
         # print(ridelist)
@@ -307,7 +311,8 @@ def driveresult(request, space):
             cur_ride = models.Ride.objects.get(id = ride_id)
             cur_ride.ridedriver = request.session['user_name']
             cur_ride.status = 1
-            print(space)
+            cur_ride.cartype = cartype
+            print(cartype)
             cur_ride.save()
         return redirect('/index/')
     return render(request, 'login/driveresult.html', locals())
