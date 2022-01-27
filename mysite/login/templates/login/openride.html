@@ -14,6 +14,9 @@
 </head>
 
 <body>
+    <br>
+    <br>
+    <br>
     <div class="container">
         <div class="col">
             <form class="form-register" action="/index/openride/" method="post">
@@ -40,16 +43,17 @@
                 <div class="form-group">
                     {{ owner_form.earlytime.label_tag }} {{ owner_form.earlytime}}
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                     {{ owner_form.latetime.label_tag }} {{ owner_form.latetime}}
-                </div>
+                </div> -->
                 <div class="form-group">
                     {{ owner_form.freeText.label_tag }} {{ owner_form.freeText}}
                 </div>
 
                 <div>
-                    <a href="/index/"><ins>back</ins></a>
-                    <button type="submit" class="btn btn-primary float-right">call a car</button>
+                    <!-- <a href="/index/"><ins>back</ins></a> -->
+                    <a class="btn btn-secondary" href="/index/" role="button">back</a>
+                    <button type="submit" class="btn btn-success float-right" style="margin-top:25px">call a car</button>
                 </div>
             </form>
         </div>

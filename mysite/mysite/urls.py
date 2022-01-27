@@ -26,6 +26,7 @@ urlpatterns = [
     path('index/driverdetail/', views.driverdetail),
     path('index/profile/',views.profile),
     path('index/profile/edit/',views.editprofile),
+    path('index/viewride<int:ride_id>/',views.viewride),
     path('index/owneredit<int:ride_id>/', views.owneredit),
     path('index/ownercancel<int:ride_id>/', views.ownercancel),
     path('index/shareredit<int:ride_id>/', views.shareredit),
@@ -35,5 +36,5 @@ urlpatterns = [
     path('index/shareride/',views.shareride),
     path('index/shareride/result<int:sharenumber>/',views.shareresult),
     path('index/driveride/',views.driveride),
-    path('index/driveride/result<int:cartype>/',views.driveresult),
+    path('index/driveride/result<str:cartype>/',views.driveresult),
 ]

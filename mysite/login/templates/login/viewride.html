@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ride detail</title>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <br>
+    <br>
+    <br>
+    <div class="container-fluid bg-body" style="width:60% !important">
+        <h1>Ride Information</h1>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td>
+                        <h6>Owner Information</h6>
+                    </td>
+                    <td>Name</td>
+                    <td>Group Number</td>
+                    <td>Gender</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>{{cur_ride.owner.name}}</td>
+                    <td>{{cur_ride.ownernumber}}</td>
+                    <td>{{cur_ride.owner.sex}}</td>
+                </tr>
+            </tbody>
+
+        </table>
+        {% if cur_car != None %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td>
+                        <h6>Driver Information</h6>
+                    </td>
+                    <td>Name</td>
+                    <td>Gender</td>
+                    <td>Car Type</td>
+                    <td>Plate Number</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>{{cur_driver.name}}</td>
+                    <td>{{cur_driver.sex}}</td>
+                    <td>{{cur_car.cartype}}</td>
+                    <td>{{cur_car.plateNumber}}</td>
+                </tr>
+            </tbody>
+        </table>
+        {% endif %} {% if sharelist %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td>
+                        <h6>Sharer Information</h6>
+                    </td>
+                    <td>Name</td>
+                    <td>Gender</td>
+                    <td>Group Number</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sharer in sharelist %}
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>{{sharer.name}}</td>
+                    <td>{{sharer.sex}}</td>
+                    {% for relationship in relationships %} {% if relationship.user == sharer and relationship.ride == cur_ride %}
+                    <td>{{relationship.groupnumber}}</td>
+                    {% endif %} {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td>
+                        <h6>Ride Information</h6>
+                    </td>
+                    <td>Destination</td>
+                    <td>Arrival Time</td>
+                    <td>People in the Ride</td>
+                    <td>Status</td>
+                    <td>Free Text</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>{{cur_ride.dest}}</td>
+                    <td>{{cur_ride.arrivaltime}}</td>
+                    <td>{{cur_ride.carspace}}</td>
+                    {% if status == 0%}
+                    <td>Waiting Driver</td>
+                    {% elif status == 1 %}
+                    <td>Confirmed</td>
+                    {% else %}
+                    <td>Complete</td>
+                    {% endif %}
+                    <td>{{cur_ride.freeText}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- <a href="/index/"><ins>back</ins></a> -->
+        <a class="btn btn-secondary" href="/index/" role="button">back</a>
+    </div>
+
+
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.15.0/umd/popper.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

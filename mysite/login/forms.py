@@ -28,8 +28,8 @@ class OwnerForm(forms.Form):
     ownernumber = forms.DecimalField(label="ownernumber" ,max_value=99 , max_digits=3, decimal_places=0, widget=forms.TextInput(attrs={'class': 'form-control'}))
     share = forms.BooleanField(label="share", required=False, widget=forms.CheckboxInput())
     dest = forms.CharField(label="dest", max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    earlytime = forms.DateTimeField(label="earlytime", widget=forms.DateTimeInput(attrs={'type':'datetime-local'}))
-    latetime = forms.DateTimeField(label="latetime", widget=forms.DateTimeInput(attrs={'type':'datetime-local'}))
+    earlytime = forms.DateTimeField(label="arrivaltime", widget=forms.DateTimeInput(attrs={'type':'datetime-local'}))
+    # latetime = forms.DateTimeField(label="latetime", widget=forms.DateTimeInput(attrs={'type':'datetime-local'}))
     freeText = forms.CharField(label="freeText", max_length=128, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     cartype = forms.CharField(label="cartype", max_length=128, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
@@ -51,7 +51,7 @@ class OwnereditForm(forms.ModelForm):
     freeText = forms.CharField(label="freeText", max_length=128, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     class Meta:
         model = models.Ride
-        exclude = ['owner','sharer', 'carspace', 'status', 'share', 'ridedriver']
+        exclude = ['owner','sharer', 'carspace', 'status', 'ridedriver', 'endtime']
 
 class SharereditForm(forms.ModelForm):
     groupnumber = forms.DecimalField(label="groupnumber" ,max_value=99 , max_digits=3, decimal_places=0, widget=forms.TextInput(attrs={'class': 'form-control'}))

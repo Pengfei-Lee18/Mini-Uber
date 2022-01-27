@@ -14,17 +14,25 @@
 </head>
 
 <body>
-    ride_id: {{ride_id}}
-
+    <br>
+    <br>
+    <br>
     <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
+        {% csrf_token %} {% if message %}
+        <div class="alert alert-warning">{{ message }}</div>
+        {% endif %}
         <div class="container main">
-            <div id="index_right" class="col-md-6 text-center right">
+            <div id="index_right">
                 {{form}}
-                <a href="/index/">back</a>
+                <!-- <a href="/index/">back</a>
                 <p style="position: absolute; left: 180px;top: 735px;" class="center">
                     <button type="submit" value="submit">submit</button>
-                </p>
+                </p> -->
+            </div>
+            <div>
+                <!-- <a href="/index/"><ins>back</ins></a> -->
+                <a class="btn btn-secondary" href="/index/" role="button">back</a>
+                <button type="submit" class="btn btn-success float-right" style="margin-top:25px">submit</button>
             </div>
         </div>
 

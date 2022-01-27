@@ -14,13 +14,17 @@
 </head>
 
 <body>
-    shareride
+    <br>
+    <br>
+    <br>
     <!-- /container -->
     <div class="container">
         <div class="col">
             <form class="form-register" action="/index/shareride/" method="post">
 
-                {% csrf_token %}
+                {% csrf_token %}{% if message %}
+                <div class="alert alert-warning">{{ message }}</div>
+                {% endif %}
                 <h3 class="text-center">search a ride as a sharer</h3>
 
                 <div class="form-group">
@@ -36,8 +40,8 @@
                     {{ sharer_form.latetime.label_tag }} {{ sharer_form.latetime}}
                 </div>
                 <div>
-                    <a href="/index/"><ins>back</ins></a>
-                    <button type="submit" class="btn btn-primary float-right">sharer search</button>
+                    <a class="btn btn-secondary" href="/index/" role="button">back</a>
+                    <button type="submit" class="btn btn-success float-right" style="margin-top:25px">Share a ride</button>
                 </div>
             </form>
         </div>

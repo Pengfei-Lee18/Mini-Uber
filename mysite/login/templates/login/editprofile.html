@@ -19,15 +19,17 @@
         <div class="alert alert-warning">{{ message }}</div>
         {% endif %}
         <div class="container main">
-            <div id="index_right" class="col-md-6 text-center right">
-                <div style="position: absolute;top: 120px;left: 30px;text-align: center">
+            <div id="index_right" class="col-md-10 text-center right">
+                <div style="width=50%">
+                    <h3 class="text-center">Edit Profile</h3>
                     <p class="home-description">
-                        username: <label>
-                            <input name="username" type="text" value="{{ cur_user.name }}">
+                        <label>
+                            Username: 
+                            <input name="username" type="text" value="{{ cur_user.name }}" class="form-control">
                         </label>
                     </p>
                     <p class="home-description">
-                        gender: {% if cur_user.sex == "male" %}
+                        Gender: {% if cur_user.sex == "male" %}
                         <label>
                                 <input name="sex" type="radio" value="male" checked>Male
                             </label>
@@ -42,8 +44,9 @@
                             </label> {% endif %}
                     </p>
                     <p class="home-description">
-                        email: <label>
-                            <input name="email" type="text" value="{{ cur_user.email }}">
+                        <label>
+                            Email:
+                            <input name="email" type="text" value="{{ cur_user.email }}" class="form-control">
                         </label>
                     </p>
                     {% if cur_user.driver %}
@@ -53,31 +56,38 @@
                         </label>
                     </p>
                     <p class="home-description">
-                        car type: <label>
-                            <input name="cartype" type="text" value="{{ cur_car.cartype }}">
+                        <label>
+                            Car Type:
+                            <input name="cartype" type="text" value="{{ cur_car.cartype }}" class="form-control">
                         </label>
                     </p>
                     <p class="home-description">
-                        plat number: <label>
-                            <input name="plateNumber" type="text" value="{{ cur_car.plateNumber }}">
+                        <label>
+                             Plate Number:
+                            <input name="plateNumber" type="text" value="{{ cur_car.plateNumber }}" class="form-control">
                         </label>
                     </p>
-                    <p class="home-description">
-                        passenger number: <label>
-                            <input name="passengersNumber" type="text" value="{{ cur_car.passengersNumber }}">
+                    <p class="home-description ">
+                        <label>
+                            Passenger Number:
+                            <input name="passengersNumber" type="text" value="{{ cur_car.passengersNumber }}" class="form-control">
                         </label>
                     </p>
-                    <p class="home-description">
-                        free text: <label>
-                            <input name="freeText" type="text" value="{{ cur_car.freeText }}">
+                    <p class="home-description ">
+                        <label>
+                            Free Text:
+                            <input name="freeText" type="text" value="{{ cur_car.freeText }}" class="form-control">
                         </label>
                     </p>
                     {% endif %}
+                    <a class="btn btn-secondary" href="/index/profile/" role="button">back</a>
+                    <br>
+                    <p>
+                        <button class="btn btn-success" style="margin-top:10px" type="submit" value="submit">submit</button>
+                    </p>
+
                 </div>
-                <a href="/index/profile/">back</a>
-                <p style="position: absolute; left: 180px;top: 735px;" class="center">
-                    <button type="submit" value="submit">submit</button>
-                </p>
+
             </div>
         </div>
 

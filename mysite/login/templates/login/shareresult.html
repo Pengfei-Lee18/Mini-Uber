@@ -14,26 +14,72 @@
 </head>
 
 <body>
-    shareresult
     <!-- /container -->
+    <br>
+    <br>
+    <br>
+    <br>
     <form method="post" enctype="multipart/form-data" action="/index/shareride/result{{sharenumber}}/">
         {% csrf_token %}
         <div class="container main">
-            <div id="index_right" class="col-md-6 text-center right">
-                <div style="position: absolute;top: 120px;left: 30px;text-align: center">
-                    {% for ride in ridelist %}
-                    <div>
-                        <label>
-                            <input name="ride" type="radio" value="{{ride.id}}">
-                            {{ride.owner}} {{ride.dest}} {{ride.endtime}}
-                        </label>
-                    </div>
-                    {% endfor %}
+            <div id="index_right">
+                <div>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <td>
+                                    Choose one
+                                </td>
+                                <td>
+                                    Owner
+                                </td>
+                                <td>
+                                    People in the ride
+                                </td>
+                                <td>
+                                    Destination
+                                </td>
+                                <td>
+                                    Time
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ride in ridelist %}
+                            <tr>
+                                <td>
+                                    <label>
+                                        <input name="ride" type="radio" value="{{ride.id}}">
+                                    </label>
+                                </td>
+                                <td>
+                                    {{ride.owner}}
+                                </td>
+                                <td>
+                                    {{ride.carspace}}
+                                </td>
+                                <td>
+                                    {{ride.dest}}
+                                </td>
+                                <td>
+                                    {{ride.arrivaltime}}
+                                </td>
+                            </tr>
+                            <!-- <label>
+                                    <input name="ride" type="radio" value="{{ride.id}}">
+                                    {{ride.owner}} {{ride.dest}} {{ride.endtime}}
+                                </label>  -->
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+
                 </div>
-                <a href="/index/shareride/">back</a>
-                <p style="position: absolute; left: 180px;top: 735px;" class="center">
-                    <button type="submit" value="submit">submit</button>
-                </p>
+                <div>
+                    <!-- <a href="/index/"><ins>back</ins></a> -->
+                    <a class="btn btn-secondary" href="/index/shareride/" role="button">back</a>
+                    <button type="submit" class="btn btn-success float-right" style="margin-top:25px">submit</button>
+                </div>
             </div>
         </div>
 

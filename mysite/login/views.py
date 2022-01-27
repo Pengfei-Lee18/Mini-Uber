@@ -5,12 +5,12 @@ from . import models
 from . import forms
 from django.db.models import Q
 import json
+from django.conf import settings
 
 # Create your views here.
 
 
 def index(request):
-    print(" abaababa",request.session.get('is_login'))
     if not request.session.get('is_login', None):
         return redirect('/login/')
     cur_user_id = request.session['user_id']
@@ -21,7 +21,7 @@ def index(request):
     
     #rides = models.Ride.objects.all()
     owner_rides = models.Ride.objects.filter(owner = cur_user)
-    sharer_rides = models.Ride.objects.filter(sharer__name__startswith = cur_user)
+    sharer_rides = models.Ride.objects.filter(sharer__name = cur_user)
     relationships = models.Relationship.objects.all()
     # for ride in sharer_rides:
     #     print("-----")
@@ -140,6 +140,7 @@ def driverdetail(request):
             new_car.plateNumber = platenumber
             new_car.passengersNumber = passengersnumber
             new_car.freeText = freetext
+
             if(cur_user.driver == False):
                 new_car.user = cur_user
                 cur_user.driver = True
@@ -187,6 +188,13 @@ def editprofile(request):
             passengersNumber = request.POST.get("passengersNumber")
             freeText = request.POST.get("freeText")
             isdriver = request.POST.get("driver")
+            ridelist = models.Ride.objects.filter(ridedriver=cur_user.name, status=1)
+            print(ridelist)
+            print(isdriver)
+            print(isdriver==None)
+            if isdriver == None and (ridelist):
+                message = "you still have an driver order, you have to be a driver"
+                return render(request, 'login/editprofile.html', locals())
             print(isdriver)
             if not (cartype and plateNumber and passengersNumber):
                 return render(request, 'login/editprofile.html', locals())
@@ -204,7 +212,13 @@ def editprofile(request):
             if same_email_user:
                 message = 'exist email'
                 return render(request, 'login/editprofile.html', locals())
+        # update driveral name in all rides
+        all_rides = models.Ride.objects.filter(ridedriver=cur_user.name)
+        for ride in all_rides:
+            ride.ridedriver = username
+            ride.save()
         cur_user.name = username
+        request.session['user_name'] = username
         cur_user.email = email
         cur_user.sex = sex
         if cur_user.driver:
@@ -227,7 +241,8 @@ def openride(request):
             share = owner_form.cleaned_data.get('share')
             dest = owner_form.cleaned_data.get('dest')
             earlytime = owner_form.cleaned_data.get('earlytime')
-            latetime = owner_form.cleaned_data.get('latetime')
+            #latetime
+            latetime = owner_form.cleaned_data.get('earlytime')
             freetext = owner_form.cleaned_data.get('freeText')
             cartype = owner_form.cleaned_data.get('cartype')
             cur_user_id = request.session['user_id']
@@ -262,7 +277,11 @@ def shareride(request):
             dest = sharer_form.cleaned_data.get('dest')
             earlytime = sharer_form.cleaned_data.get('earlytime')
             latetime = sharer_form.cleaned_data.get('latetime')
-            ridelist = models.Ride.objects.filter(Q(status=0) & Q(share=True) & Q(dest = dest) & Q(arrivaltime__gte=earlytime) & Q(arrivaltime__lte=latetime))
+            cur_user_id = request.session['user_id']
+            cur_user = models.User.objects.get(id = cur_user_id)
+            ridelist = models.Ride.objects.filter(Q(status=0) & Q(share=True) & Q(dest = dest) & \
+            Q(arrivaltime__gte=earlytime) & Q(arrivaltime__lte=latetime) & ~Q(sharer__name = cur_user) & \
+            ~Q(ridedriver = cur_user) & ~Q(owner = cur_user))
             return render(request, 'login/shareresult.html', locals())
         else:
             return render(request, 'login/shareride.html', locals())
@@ -293,10 +312,14 @@ def driveride(request):
             space = driver_form.cleaned_data.get('space')
             cartype = driver_form.cleaned_data.get('cartype')
             freeText = driver_form.cleaned_data.get('freeText')
+            cur_user_id = request.session['user_id']
+            cur_user = models.User.objects.get(id = cur_user_id)
             if(freeText == ""):
-                ridelist = models.Ride.objects.filter(Q(status=0) & Q(carspace__lte=space) & (Q(cartype = "")|Q(cartype = cartype)))
+                ridelist = models.Ride.objects.filter(Q(status=0) & Q(carspace__lte=space) & (Q(cartype = "")|Q(cartype = cartype)) & ~Q(sharer__name = cur_user) & \
+            ~Q(ridedriver = cur_user) & ~Q(owner = cur_user))
             else:
-                ridelist = models.Ride.objects.filter(Q(status=0) & Q(carspace__lte=space) & Q(freeText = freeText) & (Q(cartype = "")|Q(cartype = cartype)))
+                ridelist = models.Ride.objects.filter(Q(status=0) & Q(carspace__lte=space) & Q(freeText = freeText) & (Q(cartype = "")|Q(cartype = cartype)) & ~Q(sharer__name = cur_user) & \
+            ~Q(ridedriver = cur_user) & ~Q(owner = cur_user))
             return render(request, 'login/driveresult.html', locals())
         else:
             return render(request, 'login/driveride.html', locals())
@@ -314,6 +337,11 @@ def driveresult(request, cartype):
             cur_ride.cartype = cartype
             print(cartype)
             cur_ride.save()
+            cur_owner = cur_ride.owner
+            cur_sharerlist = cur_ride.sharer.all()
+            send_email(cur_owner.email, cur_ride, "confirmed")
+            for cur_sharer in cur_sharerlist:
+                send_email(cur_sharer.email, cur_ride, "confirmed")
         return redirect('/index/')
     return render(request, 'login/driveresult.html', locals())
 
@@ -321,6 +349,7 @@ def owneredit(request, ride_id):
     cur_ride = models.Ride.objects.get(id=ride_id)
     form = forms.OwnereditForm(instance=cur_ride)
     if request.method == 'POST':
+        message = "check your input"
         form = forms.OwnereditForm(request.POST)
         if form.is_valid():
             # save the form data to model
@@ -328,9 +357,21 @@ def owneredit(request, ride_id):
             tem_ownernumber = cur_ride.ownernumber
             cur_ride.ownernumber = form.cleaned_data.get('ownernumber')
             cur_ride.cartype = form.cleaned_data.get('cartype')
+            tem_dest = form.cleaned_data.get('dest')
+            if(cur_ride.sharer.all() and not (tem_dest == cur_ride.dest)):
+                message = "your ride has some sharers, you cannot change your destination, you can cancel this ride"
+                return render(request, 'login/editride.html', locals())
+            tem_share = form.cleaned_data.get('share')
+            print("aaaaaa")
+            print(tem_share)
+            print(tem_share==True)
+            if(cur_ride.sharer.all() and (not (tem_share == cur_ride.share)) and tem_share == False):
+                message = "your ride has some sharers, you cannot change your share status, you can cancel this ride"
+                return render(request, 'login/editride.html', locals())
+            cur_ride.share = tem_share==True
             cur_ride.dest = form.cleaned_data.get('dest')
             cur_ride.arrivaltime = form.cleaned_data.get('arrivaltime')
-            cur_ride.endtime = form.cleaned_data.get('endtime')
+            # cur_ride.endtime = form.cleaned_data.get('endtime')
             cur_ride.freeText = form.cleaned_data.get('freeText')
             cur_ride.carspace = cur_ride.carspace - tem_ownernumber + cur_ride.ownernumber
             cur_ride.save()
@@ -376,5 +417,41 @@ def complete(request, ride_id):
     cur_ride = models.Ride.objects.get(id=ride_id)
     cur_ride.status = 2
     cur_ride.save()
+    cur_owner = cur_ride.owner
+    cur_sharerlist = cur_ride.sharer.all()
+    send_email(cur_owner.email, cur_ride, "completed")
+    for cur_sharer in cur_sharerlist:
+        send_email(cur_sharer.email, cur_ride, "completed")
     return redirect('/index/')
 
+def viewride(request, ride_id):
+    cur_ride = models.Ride.objects.get(id=ride_id)
+    sharelist = cur_ride.sharer.all()
+    relationships = models.Relationship.objects.all()
+    cur_car = None
+    cur_driver = None
+    print(models.User.objects.filter(name=cur_ride.ridedriver))
+    if(models.User.objects.filter(name=cur_ride.ridedriver)):
+        cur_driver = models.User.objects.get(name=cur_ride.ridedriver)
+        cur_car = models.Car.objects.get(user = cur_driver)
+    return render(request, 'login/viewride.html', locals())
+
+def send_email(email, cur_ride, status):
+
+    from django.core.mail import EmailMultiAlternatives
+    print("发了")
+    subject = '''your order has been {}'''.format(status)
+
+    text_content = '''your order has been {}'''.format(status)
+
+    html_content = '''
+                    <p>your order has been {}, here is detailed information</p>
+                    <p>dest: {}</p>
+                    <p>time: {}</p>
+                    <p>driver: {}</p>
+                    <p>car: {}</p>
+                    '''.format(status,cur_ride.dest, cur_ride.arrivaltime, cur_ride.ridedriver, cur_ride.cartype)
+
+    msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [email])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()

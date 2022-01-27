@@ -15,35 +15,50 @@
 
 <body>
     <div class="container">
-        <div>
-            name: {{cur_user.name}}
-        </div>
-        <div>
-            gender: {{cur_user.sex}}
-        </div>
-        <div>
-            email: {{cur_user.email}}
-        </div>
-        <div>
-            isdriver: {{cur_user.driver}}
-        </div>
+        <br>
+        <br>
+        <br>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td>Personal Information</td>
+                    <td>Name</td>
+                    <td>Gender</td>
+                    <td>Email</td>
+                    <td>isDriver</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>{{cur_user.name}}</td>
+                    <td>{{cur_user.sex}}</td>
+                    <td>{{cur_user.email}}</td>
+                    <td>{{cur_user.driver}}</td>
+                </tr>
+            </thead>
+        </table>
         {% if cur_user.driver %}
-        <div>
-            car type: {{cur_car.cartype}}
-        </div>
-        <div>
-            plate number: {{cur_car.plateNumber}}
-        </div>
-        <div>
-            passenger number: {{cur_car.passengersNumber}}
-        </div>
-        <div>
-            free text: {{cur_car.freeText}}
-        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td>Car Information</td>
+                    <td>Car Type</td>
+                    <td>Plate Number</td>
+                    <td>Car Space</td>
+                    <td>Free Text</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>{{cur_car.cartype}}</td>
+                    <td>{{cur_car.plateNumber}}</td>
+                    <td>{{cur_car.passengersNumber}} people</td>
+                    <td>{{cur_car.freeText}}</td>
+                </tr>
+            </thead>
+        </table>
         {% endif %}
         <div>
-            <a href="/index/"><ins>back</ins></a>
-            <a href="/index/profile/edit"><ins>edit</ins></a>
+            <a class="btn btn-secondary" href="/index/" role="button">back</a>
+            <a class="btn btn-secondary" href="/index/profile/edit" role="button">edit</a>
         </div>
     </div>
     <!-- /container -->

@@ -14,12 +14,15 @@
 </head>
 
 <body>
-    driveresult
+    <br>
+    <br>
+    <br>
+    <br>
 
     <!-- /container -->
     <form method="post" enctype="multipart/form-data" action="/index/driveride/result{{cartype}}/">
-        {% csrf_token %}lp
-        <div class="container main">
+        {% csrf_token %}
+        <!-- <div class="container main">
             <div id="index_right" class="col-md-6 text-center right">
                 <div style="position: absolute;top: 120px;left: 30px;text-align: center">
                     {% for ride in ridelist %}
@@ -36,8 +39,70 @@
                     <button type="submit" value="submit">submit</button>
                 </p>
             </div>
-        </div>
+        </div> -->
 
+
+        <div class="container main">
+            <div id="index_right">
+                <div>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <td>
+                                    Choose one
+                                </td>
+                                <td>
+                                    Owner
+                                </td>
+                                <td>
+                                    People in the ride
+                                </td>
+                                <td>
+                                    Destination
+                                </td>
+                                <td>
+                                    Time
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ride in ridelist %}
+                            <tr>
+                                <td>
+                                    <label>
+                                        <input name="ride" type="checkbox" value="{{ride.id}}">
+                                    </label>
+                                </td>
+                                <td>
+                                    {{ride.owner}}
+                                </td>
+                                <td>
+                                    {{ride.carspace}}
+                                </td>
+                                <td>
+                                    {{ride.dest}}
+                                </td>
+                                <td>
+                                    {{ride.arrivaltime}}
+                                </td>
+                            </tr>
+                            <!-- <label>
+                                    <input name="ride" type="radio" value="{{ride.id}}">
+                                    {{ride.owner}} {{ride.dest}} {{ride.endtime}}
+                                </label>  -->
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+
+                </div>
+                <div>
+                    <!-- <a href="/index/"><ins>back</ins></a> -->
+                    <a class="btn btn-secondary" href="/index/driveride/" role="button">back</a>
+                    <button type="submit" class="btn btn-success float-right" style="margin-top:25px">submit</button>
+                </div>
+            </div>
+        </div>
     </form>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
