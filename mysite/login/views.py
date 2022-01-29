@@ -6,6 +6,7 @@ from . import forms
 from django.db.models import Q
 import json
 from django.conf import settings
+from datetime import datetime
 
 # Create your views here.
 
@@ -196,6 +197,10 @@ def editprofile(request):
                 message = "you still have an driver order, you have to be a driver"
                 return render(request, 'login/editprofile.html', locals())
             print(isdriver)
+            if (not (cartype == cur_car.cartype and plateNumber == cur_car.plateNumber \
+            and passengersNumber == cur_car.passengersNumber and freeText == cur_car.freeText)) and (ridelist):
+                message = "you still have an driver order, you cannot change your car info"
+                return render(request, 'login/editprofile.html', locals())
             if not (cartype and plateNumber and passengersNumber):
                 return render(request, 'login/editprofile.html', locals())
             print(int(passengersNumber))
@@ -273,13 +278,18 @@ def shareride(request):
         sharer_form = forms.ShareForm(request.POST)
         message = "check your input"
         if sharer_form.is_valid():
+            maxnumber = sharer_form.cleaned_data.get('maxnumber')
             sharenumber = sharer_form.cleaned_data.get('sharenumber')
             dest = sharer_form.cleaned_data.get('dest')
             earlytime = sharer_form.cleaned_data.get('earlytime')
             latetime = sharer_form.cleaned_data.get('latetime')
             cur_user_id = request.session['user_id']
+            print(earlytime)
+            request.session['early_time'] = earlytime.strftime("%Y-%m-%d %H:%M:%S %z")
+            request.session['late_time'] = latetime.strftime("%Y-%m-%d %H:%M:%S %z")
+            print(request.session['early_time'])
             cur_user = models.User.objects.get(id = cur_user_id)
-            ridelist = models.Ride.objects.filter(Q(status=0) & Q(share=True) & Q(dest = dest) & \
+            ridelist = models.Ride.objects.filter(Q(carspace__lte=maxnumber) & Q(status=0) & Q(share=True) & Q(dest = dest) & \
             Q(arrivaltime__gte=earlytime) & Q(arrivaltime__lte=latetime) & ~Q(sharer__name = cur_user) & \
             ~Q(ridedriver = cur_user) & ~Q(owner = cur_user))
             return render(request, 'login/shareresult.html', locals())
@@ -293,24 +303,38 @@ def shareresult(request, sharenumber):
         ride_id = request.POST.get("ride")
         cur_ride = models.Ride.objects.get(id = ride_id)
         cur_user_id = request.session['user_id']
+        earlytime = datetime.strptime(request.session['early_time'], "%Y-%m-%d %H:%M:%S %z")
+        latetime = datetime.strptime(request.session['late_time'], "%Y-%m-%d %H:%M:%S %z")
+        del request.session['early_time']
+        del request.session['late_time']
+        print(earlytime)
+        
         cur_user = models.User.objects.get(id = cur_user_id)
-        new_relationship = models.Relationship(user=cur_user, ride=cur_ride, groupnumber=sharenumber)
+        new_relationship = models.Relationship(user=cur_user, ride=cur_ride, groupnumber=sharenumber, earlytime=earlytime, latetime=latetime)
+        
         print(sharenumber)
         
         cur_ride.carspace = cur_ride.carspace + sharenumber
         print(cur_ride.carspace)
         cur_ride.save()
         new_relationship.save()
+        print(new_relationship)
         return redirect('/index/')
     return render(request, 'login/shareresult.html', locals())
 
 def driveride(request):
+    cur_user_id = request.session['user_id']
+    cur_user = models.User.objects.get(id = cur_user_id)
+    cur_car = models.Car.objects.get(user = cur_user)
+    driver_form = forms.DriverForm(instance=cur_car)
     if request.method == 'POST':
         driver_form = forms.DriverForm(request.POST)
         message = "check your input"
         if driver_form.is_valid():
-            space = driver_form.cleaned_data.get('space')
-            cartype = driver_form.cleaned_data.get('cartype')
+            space = cur_car.passengersNumber
+            cartype = cur_car.cartype
+            # print(cartype)
+            # print(space)
             freeText = driver_form.cleaned_data.get('freeText')
             cur_user_id = request.session['user_id']
             cur_user = models.User.objects.get(id = cur_user_id)
@@ -323,7 +347,6 @@ def driveride(request):
             return render(request, 'login/driveresult.html', locals())
         else:
             return render(request, 'login/driveride.html', locals())
-    driver_form = forms.DriverForm()
     return render(request, 'login/driveride.html', locals())
 
 def driveresult(request, cartype):
@@ -359,18 +382,35 @@ def owneredit(request, ride_id):
             cur_ride.cartype = form.cleaned_data.get('cartype')
             tem_dest = form.cleaned_data.get('dest')
             if(cur_ride.sharer.all() and not (tem_dest == cur_ride.dest)):
-                message = "your ride has some sharers, you cannot change your destination, you can cancel this ride"
-                return render(request, 'login/editride.html', locals())
+                for sharer in cur_ride.sharer.all():
+                    cur_relationship = models.Relationship.objects.get(user=sharer, ride=cur_ride)
+                    cur_ride.carspace = cur_ride.carspace - cur_relationship.groupnumber
+                    cur_relationship.delete()
+                    cur_ride.save()
+                    send_cancel_email(sharer.email, cur_ride)
             tem_share = form.cleaned_data.get('share')
             print("aaaaaa")
             print(tem_share)
             print(tem_share==True)
             if(cur_ride.sharer.all() and (not (tem_share == cur_ride.share)) and tem_share == False):
-                message = "your ride has some sharers, you cannot change your share status, you can cancel this ride"
-                return render(request, 'login/editride.html', locals())
+                for sharer in cur_ride.sharer.all():
+                    cur_relationship = models.Relationship.objects.get(user=sharer, ride=cur_ride)
+                    cur_ride.carspace = cur_ride.carspace - cur_relationship.groupnumber
+                    cur_relationship.delete()
+                    cur_ride.save()
+                    send_cancel_email(sharer.email, cur_ride)
             cur_ride.share = tem_share==True
             cur_ride.dest = form.cleaned_data.get('dest')
-            cur_ride.arrivaltime = form.cleaned_data.get('arrivaltime')
+            tem_time = form.cleaned_data.get('arrivaltime')
+            if(cur_ride.sharer.all() and (not (cur_ride.arrivaltime == tem_time))):
+                for sharer in cur_ride.sharer.all():
+                    cur_relationship = models.Relationship.objects.get(user=sharer, ride=cur_ride)
+                    if not (cur_relationship.earlytime<=tem_time and cur_relationship.latetime>=tem_time):
+                        cur_ride.carspace = cur_ride.carspace - cur_relationship.groupnumber
+                        cur_relationship.delete()
+                        cur_ride.save()
+                        send_cancel_email(sharer.email, cur_ride)
+            cur_ride.arrivaltime = tem_time
             # cur_ride.endtime = form.cleaned_data.get('endtime')
             cur_ride.freeText = form.cleaned_data.get('freeText')
             cur_ride.carspace = cur_ride.carspace - tem_ownernumber + cur_ride.ownernumber
@@ -451,6 +491,26 @@ def send_email(email, cur_ride, status):
                     <p>driver: {}</p>
                     <p>car: {}</p>
                     '''.format(status,cur_ride.dest, cur_ride.arrivaltime, cur_ride.ridedriver, cur_ride.cartype)
+
+    msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [email])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+def send_cancel_email(email, cur_ride):
+
+    from django.core.mail import EmailMultiAlternatives
+    print("发了")
+    subject = '''your order has been canceled'''
+
+    text_content = '''your order has been canceled due to some changes made by owner'''
+
+    html_content = '''
+                    <p>your order has been canceled due to some changes made by owner, here is detailed information</p>
+                    <p>dest: {}</p>
+                    <p>time: {}</p>
+                    <p>driver: {}</p>
+                    <p>car: {}</p>
+                    '''.format(cur_ride.dest, cur_ride.arrivaltime, cur_ride.ridedriver, cur_ride.cartype)
 
     msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [email])
     msg.attach_alternative(html_content, "text/html")

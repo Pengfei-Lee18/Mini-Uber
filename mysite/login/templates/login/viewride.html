@@ -103,9 +103,9 @@
                     <td>{{cur_ride.dest}}</td>
                     <td>{{cur_ride.arrivaltime}}</td>
                     <td>{{cur_ride.carspace}}</td>
-                    {% if status == 0%}
+                    {% if cur_ride.status == 0%}
                     <td>Waiting Driver</td>
-                    {% elif status == 1 %}
+                    {% elif cur_ride.status == 1 %}
                     <td>Confirmed</td>
                     {% else %}
                     <td>Complete</td>

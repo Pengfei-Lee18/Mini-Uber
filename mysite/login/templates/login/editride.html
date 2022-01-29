@@ -23,7 +23,24 @@
         {% endif %}
         <div class="container main">
             <div id="index_right">
-                {{form}}
+                <div class="form-group">
+                    {{ form.ownernumber.label_tag }} {{ form.ownernumber}}
+                </div>
+                <div class="form-group">
+                    {{ form.cartype.label_tag }} {{ form.cartype}}
+                </div>
+                <div class="form-group">
+                    {{ form.dest.label_tag }} {{ form.dest}}
+                </div>
+                <div class="form-group">
+                    {{ form.arrivaltime.label_tag }} {{ form.arrivaltime}}
+                </div>
+                <div class="form-group">
+                    {{ form.share.label_tag }} {{ form.share}}
+                </div>
+                <div class="form-group">
+                    {{ form.freeText.label_tag }} {{ form.freeText}}
+                </div>
                 <!-- <a href="/index/">back</a>
                 <p style="position: absolute; left: 180px;top: 735px;" class="center">
                     <button type="submit" value="submit">submit</button>

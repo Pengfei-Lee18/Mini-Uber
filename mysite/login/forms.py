@@ -33,14 +33,18 @@ class OwnerForm(forms.Form):
     freeText = forms.CharField(label="freeText", max_length=128, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     cartype = forms.CharField(label="cartype", max_length=128, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-class DriverForm(forms.Form):
-    space = forms.DecimalField(label="space" ,max_value=99 , required=True, max_digits=3, decimal_places=0, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    cartype = forms.CharField(label="cartype", max_length=128, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+class DriverForm(forms.ModelForm):
+    cartype = forms.CharField(label="cartype", max_length=128,required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'disabled': True}))
+    passengersNumber = forms.DecimalField(label="passengerNumber" ,max_value=99 ,required=False, max_digits=3, decimal_places=0, widget=forms.TextInput(attrs={'class': 'form-control', 'disabled': True}))
     freeText = forms.CharField(label="freeText", max_length=128, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    class Meta:
+        model = models.Car
+        exclude = ['plateNumber', 'user']
 
 class ShareForm(forms.Form):
-    sharenumber = forms.DecimalField(label="sharenumber" ,max_value=99 , required=True, max_digits=3, decimal_places=0, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    dest = forms.CharField(label="dest", max_length=128, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    sharenumber = forms.DecimalField(label="group number" ,max_value=99 , required=True, max_digits=3, decimal_places=0, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    maxnumber = forms.DecimalField(label="max number of people in the ride" ,max_value=99 , required=True, max_digits=3, decimal_places=0, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    dest = forms.CharField(label="destination", max_length=128, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     earlytime = forms.DateTimeField(label="earlytime", widget=forms.DateTimeInput(attrs={'type':'datetime-local'}))
     latetime = forms.DateTimeField(label="latetime", widget=forms.DateTimeInput(attrs={'type':'datetime-local'}))
 

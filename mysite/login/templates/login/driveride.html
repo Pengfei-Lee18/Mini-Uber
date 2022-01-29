@@ -22,15 +22,13 @@
         <div class="col">
             <form class="form-register" action="/index/driveride/" method="post">
 
-                {% if register_form.captcha.errors %}
-                <div class="alert alert-warning">{{ register_form.captcha.errors }}</div>
-                {% elif message %}
+                {% if message %}
                 <div class="alert alert-warning">{{ message }}</div>
                 {% endif %} {% csrf_token %}
                 <h3 class="text-center">search a ride as a driver</h3>
 
                 <div class="form-group">
-                    {{ driver_form.space.label_tag }} {{ driver_form.space}}
+                    {{ driver_form.passengersNumber.label_tag }} {{ driver_form.passengersNumber}}
                 </div>
                 <div class="form-group">
                     {{ driver_form.cartype.label_tag }} {{ driver_form.cartype}}

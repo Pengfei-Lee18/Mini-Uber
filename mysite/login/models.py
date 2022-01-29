@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import date
+from django.utils.timezone import now
 
 # Create your models here.
 
@@ -54,5 +55,7 @@ class Relationship(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ride = models.ForeignKey(Ride, on_delete=models.CASCADE)
     groupnumber = models.DecimalField(max_digits=3, decimal_places=0)
+    earlytime = models.DateTimeField(default=now)
+    latetime = models.DateTimeField(default=now)
     
     
