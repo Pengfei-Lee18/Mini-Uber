@@ -1,0 +1,218 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/cheatsheet/">
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'login/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'login/cheatsheet.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    <div class="bd-cheatsheet container-fluid bg-body" style="width:80% !important">
+        <div style="margin-bottom: 10px; width:100px !important" class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a class="btn btn-light me-md-2" href="/logout/" role="button">Log out</a>
+        </div>
+        <section id="content">
+            <div>
+                <h1 class="text-center">{{ request.session.user_name }}! Welcome! </h1>
+
+
+                <div class="d-grid gap-2">
+                    {% if not isdriver %}
+                    <a class="btn btn-success" href="/index/driverdetail" role="button">Let's be a driver</a> {% endif %}
+                    <a class="btn btn-info" href="/index/profile" role="button">Personal Profile</a>
+                    <a class="btn btn-info" href="/index/openride" role="button">Open a ride as an owner</a>
+                    <a class="btn btn-info" href="/index/shareride" role="button">Search a ride as a sharer</a> {% if isdriver %}
+                    <a class="btn btn-info" href="/index/driveride" role="button">Search a ride as a driver</a> {% endif %}
+                </div>
+            </div>
+            <article class="my-lg-0" id="tables">
+                <br>
+                <br>
+                <h3 class="text-center">User Related Information</h3>
+                <div>
+                    <div class="bd-example" style="width:100% !important">
+                        <caption>As Owner</caption>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Owner</th>
+                                    <th scope="col">Driver</th>
+                                    <th scope="col">Car Type</th>
+                                    <th scope="col">Destination</th>
+                                    <th scope="col">Arrival Time</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Operation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ride in owner_rides %}
+                                <tr class="table-info">
+                                    <th scope="row">{{ride.owner}}</th>
+                                    <td>{{ride.ridedriver}}</td>
+                                    <td>{{ride.cartype}}</td>
+                                    <td>{{ride.dest}}</td>
+                                    <td>{{ride.arrivaltime}}</td>
+                                    <td>{% if ride.status == 0 %} Waiting Driver{% elif ride.status == 1 %} Confirmed{% else %} Completed{% endif %}
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-secondary" href="/index/viewride{{ride.id}}" role="button">view</a>{% if ride.status == 0 %}
+                                        <a class="btn btn-warning" href="/index/owneredit{{ride.id}}" role="button">edit</a>
+                                        <a class="btn btn-danger" href="/index/ownercancel{{ride.id}}" role="button">cancel</a>{% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="bd-example">
+                        <br>
+                        <caption>As Sharer</caption>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Owner</th>
+                                    <th scope="col">Driver</th>
+                                    <th scope="col">Car Type</th>
+                                    <th scope="col">Destination</th>
+                                    <th scope="col">Arrival Time</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Operation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ride in sharer_rides %}
+                                <tr class="table-info">
+                                    <th scope="row">{{ride.owner}}</th>
+                                    <td>{{ride.ridedriver}}</td>
+                                    <td>{{ride.cartype}}</td>
+                                    <td>{{ride.dest}}</td>
+                                    <td>{{ride.arrivaltime}}</td>
+                                    <td>{% if ride.status == 0 %} Waiting Driver{% elif ride.status == 1 %} Confirmed{% else %} Completed{% endif %}
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-secondary" href="/index/viewride{{ride.id}}" role="button">view</a>{% if ride.status == 0 %}
+                                        <a class="btn btn-warning" href="/index/shareredit{{ride.id}}" role="button">edit</a>
+                                        <a class="btn btn-danger" href="/index/sharercancel{{ride.id}}" role="button">cancel</a>{% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="bd-example">
+                        <br>
+                        <caption>As Driver</caption>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Owner</th>
+                                    <th scope="col">Driver</th>
+                                    <th scope="col">Car Type</th>
+                                    <th scope="col">Destination</th>
+                                    <th scope="col">Arrival Time</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Operation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ride in driver_rides %}
+                                <tr class="table-info">
+                                    <th scope="row">{{ride.owner}}</th>
+                                    <td>{{ride.ridedriver}}</td>
+                                    <td>{{ride.cartype}}</td>
+                                    <td>{{ride.dest}}</td>
+                                    <td>{{ride.arrivaltime}}</td>
+                                    <td>{% if ride.status == 0 %} Waiting Driver{% elif ride.status == 1 %} Confirmed{% else %} Completed{% endif %}
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-secondary" href="/index/viewride{{ride.id}}" role="button">view</a> {% if ride.status == 1 %}
+                                        <a class="btn btn-success" href="/index/complete{{ride.id}}" role="button">complete</a> {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+
+        <!-- <div>
+            <h2>Owner:</h2>
+            {% for ride in owner_rides %}
+            <p>owner:{{ride.owner}}</p>
+            <p>ownernumber:{{ride.ownernumber}}</p>
+            <p>cartype:{{ride.cartype}}</p>
+            <p>ridedriver:{{ride.ridedriver}}</p>
+            {% for sharer in ride.sharer.all %}
+            <p>sharer:{{sharer.name}}</p>
+            {% for relationship in relationships %} {% if relationship.user == sharer and relationship.ride == ride %}
+            <p>sharernumber:{{relationship.groupnumber}}</p>
+            {% endif %} {% endfor %} {% endfor %}
+            <p>dest:{{ride.dest}}</p>
+            <p>arrivaltime:{{ride.arrivaltime}}</p>
+            <p>endtime:{{ride.endtime}}</p>
+            <p>freeText:{{ride.freeText}}</p>
+            {% if ride.status == 0 %}
+            <a href="/index/owneredit{{ride.id}}">edit</a>
+            <a href="/index/ownercancel{{ride.id}}">cancel</a> {% endif %}
+            <p>------------------------------------</p>
+
+            {% endfor %}
+        </div>
+        <div>
+            <h2>Sharer</h2>
+            {% for ride in sharer_rides %}
+            <p>owner:{{ride.owner}}</p>
+            <p>ownernumber:{{ride.ownernumber}}</p>
+            <p>cartype:{{ride.cartype}}</p>
+            <p>ridedriver:{{ride.ridedriver}}</p>
+            {% for sharer in ride.sharer.all %}
+            <p>sharer:{{sharer.name}}</p>
+            {% for relationship in relationships %} {% if relationship.user == sharer and relationship.ride == ride %}
+            <p>sharernumber:{{relationship.groupnumber}}</p>
+            {% endif %} {% endfor %} {% endfor %}
+            <p>dest:{{ride.dest}}</p>
+            <p>arrivaltime:{{ride.arrivaltime}}</p>
+            <p>endtime:{{ride.endtime}}</p>
+            <p>freeText:{{ride.freeText}}</p>
+            {% if ride.status == 0 %}
+            <a href="/index/shareredit{{ride.id}}">edit</a>
+            <a href="/index/sharercancel{{ride.id}}">cancel</a> {% endif %}
+            <p>------------------------------------</p>
+
+            {% endfor %}
+        </div>
+        <div>
+            <h2>Driver</h2>
+            {% for ride in driver_rides %}
+            <p>owner:{{ride.owner}}</p>
+            <p>ownernumber:{{ride.ownernumber}}</p>
+            <p>cartype:{{ride.cartype}}</p>
+            <p>ridedriver:{{ride.ridedriver}}</p>
+            {% for sharer in ride.sharer.all %}
+            <p>sharer:{{sharer.name}}</p>
+            {% for relationship in relationships %} {% if relationship.user == sharer and relationship.ride == ride %}
+            <p>sharernumber:{{relationship.groupnumber}}</p>
+            {% endif %} {% endfor %} {% endfor %}
+            <p>dest:{{ride.dest}}</p>
+            <p>arrivaltime:{{ride.arrivaltime}}</p>
+            <p>endtime:{{ride.endtime}}</p>
+            <p>freeText:{{ride.freeText}}</p>
+            {% if ride.status == 1 %}
+            <a href="/index/complete{{ride.id}}">complete</a> {% endif %}
+            <p>------------------------------------</p>
+            {% endfor %}
+        </div> -->
+    </div>
+
+    <script src="{% static 'login/cheatsheet.js' %}"></script>
+</body>
+
+</html>

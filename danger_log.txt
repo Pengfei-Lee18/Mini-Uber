@@ -1,0 +1,29 @@
+1.20.
+At the beginning, if the driver has already taken the order, he is allowed to change the vehicle information. 
+This may cause a mismatch between the final information of the vehicle and the information required by the passenger. 
+Therefore we do not allow the driver to make changes to the vehicle information after the driver has taken the order.
+
+1.22.
+If the owner makes changes to the trip information when there is a sharer, this can result in a situation 
+where the destination does not match the destination of the sharer, or the time window of the sharer does 
+not match the time requested by the owner. Therefore, we automatically cancel all sharer orders after the 
+owner has modified the destination. After the owner has modified the time, it will automatically search for 
+the mismatched sharer and cancel its order, and send an email notification.
+
+1.23.
+Due to the setting of the form, the form for editing personal information may be submitted illegally. Therefore, 
+we validate their submitted forms. But not all illegal cases are covered now.
+
+1.24.
+We did not encrypt the user's password, resulting in the user's password being in plaintext in the database. 
+But due to time we could not correct it in time. We plan to store it in the database using hash encryption or 
+some other encryption method.
+
+1.26.
+The user can make a reservation for a trip decades later, or the user can enter an illegitimate time window (latetime<earlytime) 
+We have solved this problem by validating it in the form submission area.
+
+1.27.
+Now there may be a big delay after clicking "complete" or "confirm" button, because of the need to send an email. 
+The user experience is not very good. In the future, we plan to make it an asynchronous command to reduce the response time.
+

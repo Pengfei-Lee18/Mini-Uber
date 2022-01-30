@@ -1,0 +1,50 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'login/register.css' %}" rel="stylesheet" />
+    <title>driverdetail</title>
+</head>
+
+<body>
+    <div>
+        driverdetail
+    </div>
+    <div>
+        <form class="form-register" action="/index/driverdetail/" method="post">
+            {% csrf_token %}
+            <h3 class="text-center">to be a driver</h3>
+            {% if message %}
+            <div class="alert alert-warning">{{ message }}</div>
+            {% endif %}
+            <div class="form-group">
+                {{ driverdetail_form.cartype.label_tag }} {{ driverdetail_form.cartype}}
+            </div>
+            <div class="form-group">
+                {{ driverdetail_form.plateNumber.label_tag }} {{ driverdetail_form.plateNumber }}
+            </div>
+            <div class="form-group">
+                {{ driverdetail_form.passengersNumber.label_tag }} {{ driverdetail_form.passengersNumber }}
+            </div>
+            <div class="form-group">
+                {{ driverdetail_form.freeText.label_tag }} {{ driverdetail_form.freeText }}
+            </div>
+
+            <div>
+                <a href="/index/"><ins>may be later</ins></a>
+                <button type="submit" class="btn btn-primary float-right">be a driver now!</button>
+            </div>
+        </form>
+    </div>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.15.0/umd/popper.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
